@@ -39,8 +39,10 @@ window.addEventListener('popstate', () => {
 
 GameEngine.addEntity(new Background({image: 'road.png'}))
 GameEngine.addEntity(new Player({image: 'car.png', position: [0, 1]}))
-GameEngine.addEntity(new Enemy({image: 'truck.png'}))
-GameEngine.addEntity(new Enemy({image: 'truck.png'}))
-GameEngine.addEntity(new Enemy({image: 'truck.png'}))
-GameEngine.addEntity(new Enemy({image: 'truck.png'}))
+let count = 0
+GameEngine.onTick(() => {
+  count = ( count + 1 ) % 3
+  console.log(count)
+  if (count === 1) GameEngine.addEntity(new Enemy({image: 'truck.png'}))
+})
 GameEngine.run()

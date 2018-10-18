@@ -17,6 +17,7 @@ export class Entity {
   }
 
   onTick () {
+    this.lastPosition = this.position
   }
 
   draw(){
@@ -57,7 +58,7 @@ export class Enemy extends Entity {
     const availableX = $canvas.width / UNITS
     const availableY = $canvas.height / UNITS
     this.position[0] = Math.floor((Math.random() * availableX))
-    this.position[1] = (availableY - this.size[1]) - availableX // in this instance availableX is the amount offset caused by initial popstating
+    this.position[1] = (availableY - this.size[1]) // in this instance availableX is the amount offset caused by initial popstating
   }
 
   onTick() {
@@ -73,8 +74,26 @@ export class Player extends Entity {
   constructor(props){
     super(props)
     this.type = types.PLAYER
+    this.animatingTicks = 0
   }
-  onTick(){
+  onTick(){ // todo: refactor to onNewPosition
+    if (this.moving) return
+    this.lastPosition = [ this.position[0], this.position[1]]
     this.position[0] = history.state.position
+    this.direction = this.position[0] - this.lastPosition[0]
+    if (this.lastPosition[0] !== this.position[0]) this.moving = true
+  }
+  draw(){
+    const frames_to_move_duration = 10
+    if (this.moving){
+      console.log('moving')
+      this.animatingTicks++ // todo: refactor to support X/Y movement
+      this.position[0] = this.lastPosition[0] + ((this.animatingTicks / frames_to_move_duration) * this.direction)
+      if (this.animatingTicks >= frames_to_move_duration) {
+        this.animatingTicks = 0
+        this.moving = false
+      }
+    }
+    super.draw()
   }
 }

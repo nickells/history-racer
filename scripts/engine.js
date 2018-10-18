@@ -8,15 +8,22 @@ import {
 export default class Engine {
   constructor(){
     this._entities = []
+    this._onTick = () => {}
     this.triggerEntityTicksForward = this.triggerEntityTicksForward.bind(this)
     this.triggerEntityTicksBackward = this.triggerEntityTicksBackward.bind(this)
   }
 
+  onTick(func){
+    this._onTick = func
+  }
+
   triggerEntityTicksForward() {
     this._entities.forEach(entity => entity.onTick())
+    this._onTick()
   }
 
   triggerEntityTicksBackward() {
+    this._onTick()
     this._entities.forEach(entity => {
       if (entity.type === types.ENEMY) entity.onTickBack()
         else entity.onTick()
